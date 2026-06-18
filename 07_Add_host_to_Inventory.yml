@@ -1,0 +1,26 @@
+---
+- name: Permanently add host to inventory file
+  hosts: localhost
+  gather_facts: false
+
+  vars:
+    new_host: '{{target_host}} ansible_host={{ansible_host}}'
+    inventory_file: /etc/ansible/ansible/my-inventory
+
+  tasks:
+    - name: Add host under windows group
+      ansible.builtin.lineinfile:
+        path: '{{ inventory_file }}'
+        insertafter: '^\[windows\]'
+        line: '{{ new_host }}'
+        state: present
+
+    - name: Verify host added
+      ansible.builtin.command: cat '{{ inventory_file }}'
+      register: inventory_content
+
+    - name: Show inventory
+      debug:
+        msg: '{{ inventory_content.stdout_lines }}'
+
+# ansible-playbook playbooks/05_add_host_to_inventory.yml -e '{"target_host":"BigfixPOC4", "ansible_host":"192.168.77.16"}'

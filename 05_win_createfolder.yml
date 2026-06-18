@@ -1,0 +1,32 @@
+---
+- name: Create folder on Windows VM
+  hosts: windows
+  become: false
+  gather_facts: false
+
+  tasks:
+    - name: Create folder in D drive
+      ansible.windows.win_file:
+        path: D:\Ansible
+        state: directory
+      register: folder_result
+
+    - name: Show folder creation status
+      debug:
+        msg: 'Folder D:\Ansible created successfully'
+      when: folder_result.changed
+
+    - name: Show folder already exists
+      debug:
+        msg: 'Folder D:\Ansible already exists'
+      when: not folder_result.changed
+
+    - name: Copy files to Folder 
+      ansible.windows.win_copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+      loop:
+        - { src: '/etc/ansible/playbooks/02_install_nginx.yml', dest: 'D:\Ansible\02_install_nginx.yml' }
+        - { src: '/etc/ansible/playbooks/03_testconnection.yml', dest: 'D:\Ansible\03_testconnection.yml' }
+        - { src: '/etc/ansible/playbooks/04_create_folder.yml ', dest: 'D:\Ansible\04_create_folder.yml' }
+    
