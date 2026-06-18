@@ -6,5 +6,5 @@
   - name: Test Connectivity
     ping:
 
-  - name: "Print Output dddfdfsfd"
+  - name: "Print Output"
     debug: msg="Alright!!"
